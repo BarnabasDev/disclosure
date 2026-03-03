@@ -34,7 +34,7 @@ SESSION_CONFIGS = [
 # the session config can be accessed from methods in your apps as self.session.config,
 # e.g. self.session.config['participation_fee']
 ROOMS = [
-    dict( name='Study'. display_name = 'Study'),
+    dict( name='Study', display_name = 'Study'),
 ]
 
 SESSION_CONFIG_DEFAULTS = dict(

@@ -1,0 +1,651 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block styles %}
+<style>
+  /* ── Base ── */
+   .center-text {
+    text-align: center;
+  }
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .brown-word { font-weight: bold; color: #7b3f00; }
+  .black-word  { font-weight: bold; color: #212121; }
+
+  /* ── Page header ── */
+  .page-header {
+    text-align: center;
+  }
+  .page-header h2 {
+    color: #004d40;
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+  .page-header p {
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  /* ── Step indicator ── */
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.8rem;
+    font-size: 0.85rem;
+    color: #555;
+  }
+  .step-pill {
+    padding: 0.25rem 0.9rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
+  .step-pill.active {
+    background-color: #26a69a;
+    color: white;
+  }
+  .step-pill.inactive {
+    background-color: #e0f2f1;
+    color: #26a69a;
+  }
+  .step-arrow { color: #b2dfdb; font-size: 1rem; }
+
+  /* Step number badge */
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #26a69a;
+    color: white;
+    font-weight: 700;
+    font-size: 0.78rem;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-right: 0.55rem;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .step-header h5 {
+    margin: 0;
+  }
+
+  /* ── Reference buttons row ── */
+  .ref-btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    flex-wrap: wrap;
+  }
+  .ref-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background-color: #ffffff;
+    border: 2px solid #26a69a;
+    color: #00796b;
+    border-radius: 8px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, transform 0.15s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  .ref-btn:hover {
+    background-color: #26a69a;
+    color: white;
+    transform: translateY(-1px);
+  }
+  .ref-btn .btn-icon { font-size: 1rem; }
+  .ref-btn.dimmed {
+    border-color: #b2dfdb;
+    color: #80cbc4;
+  }
+  .ref-btn.dimmed:hover {
+    background-color: #e0f2f1;
+    color: #26a69a;
+    transform: none;
+  }
+
+  /* ── Section heading ── */
+  h3 { color: #004d40; font-weight: 700; margin-bottom: 1rem; }
+
+  /* ── Info card ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  /* ── Question block ── */
+  .question-block {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.4rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: border-left-color 0.25s, opacity 0.3s;
+  }
+  .question-block:last-child { margin-bottom: 0; }
+  .question-block p.q-text {
+    font-weight: 600;
+    color: #00796b;
+    margin-bottom: 0.75rem;
+    font-size: 0.97rem;
+  }
+
+  /* ── Locked state ── */
+  .question-block.locked {
+    opacity: 0.4;
+    pointer-events: none;
+    border-left-color: #ccc;
+  }
+  .lock-hint {
+    font-size: 0.82rem;
+    color: #999;
+    font-style: italic;
+    margin-top: 0.4rem;
+    display: none;
+  }
+  .question-block.locked .lock-hint {
+    display: block;
+  }
+
+  /* ── Radio options ── */
+  .options-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .options-list li label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-size: 0.93rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .options-list li label:hover {
+    background-color: #e8f5f4;
+    border-color: #80cbc4;
+  }
+  .options-list li input[type="radio"] {
+    accent-color: #26a69a;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ── Feedback states ── */
+  .question-block.correct   { border-left-color: #43a047; }
+  .question-block.incorrect { border-left-color: #e53935; }
+
+  .feedback-msg {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback-msg.correct-msg   { color: #43a047; }
+  .feedback-msg.incorrect-msg { color: #e53935; }
+
+  /* ── Progress dots ── */
+  .progress-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #b2dfdb;
+    transition: background-color 0.3s;
+  }
+  .dot.correct   { background-color: #43a047; }
+  .dot.incorrect { background-color: #e53935; }
+
+  /* ── Error banner ── */
+  .error-banner {
+    display: none;
+    background-color: #fff3f3;
+    border: 1px solid #e53935;
+    border-radius: 6px;
+    color: #b71c1c;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.1rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+
+  /* ── Submit button ── */
+  button[type="submit"] {
+    display: block;
+    margin: 1.5rem auto 0;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button[type="submit"]:hover {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+
+  /* ── Modal ── */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+  }
+  .modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    margin: 5% auto;
+    width: 88%;
+    max-width: 620px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease;
+    max-height: 82vh;
+    overflow-y: auto;
+  }
+
+  .modal-content.wide-modal {
+  max-width: 900px;  /* or whatever width you need */
+  }
+
+  .modal-content h4 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  .modal-content p, .modal-content li {
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: #333;
+  }
+  .modal-content ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  .close {
+    position: absolute;
+    right: 14px; top: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #26a69a;
+    line-height: 1;
+  }
+  .close:hover { color: #004d40; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-sub {
+    background-color: #f0f9f9;
+    border-left: 4px solid #26a69a;
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 0.9rem;
+  }
+  .modal-sub h5 {
+    color: #00796b;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 740px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h3>Introduction 5/5</h3><br>
+    <p><b>Before starting the experiment, please answer the following question correctly.</b></p>
+  </div>
+
+  <!-- Reference buttons -->
+  <div class="ref-btn-row">
+    <button type="button" class="ref-btn dimmed" onclick="document.getElementById('modalInstr').style.display='flex'">
+      <span class="btn-icon">📋</span> Review Experiment Timeline
+    </button>
+    <button type="button" class="ref-btn" onclick="document.getElementById('modalPoints').style.display='flex'">
+      <span class="btn-icon">🔢</span> Review Points Calculation
+    </button>
+  </div>
+
+  <!-- Progress dots -->
+  <div class="progress-row" id="progressDots"></div>
+
+  <form id="compForm">
+
+    <div class="info-card">
+      <!-- Q5 – unlocked by default -->
+      <div class="question-block" id="qblock-5">
+        <p class="q-text">1. What is the bonus color?</p>
+        <ul class="options-list">
+          <li><label><input type="radio" name="q5_answer" value="a"> The color that participant <em>A</em> chooses</label></li>
+          <li><label><input type="radio" name="q5_answer" value="b"> The color that may give participant <em>A</em> additional points</label></li>
+          <li><label><input type="radio" name="q5_answer" value="c"> The color that may give participant <em>B</em> additional points</label></li>
+          <li><label><input type="radio" name="q5_answer" value="d"> The color that participant <em>A</em> observes</label></li>
+        </ul>
+        <p class="feedback-msg correct-msg"  id="fb5-ok">✔ Correct!</p>
+        <p class="feedback-msg incorrect-msg" id="fb5-no">✘ Not quite — please review the points calculation and try again.</p>
+        <p class="lock-hint">Answer question 1 correctly to unlock this question.</p>
+      </div>
+
+      <!-- Q6 – locked until Q5 correct -->
+      <div class="question-block locked" id="qblock-6">
+        <p class="q-text">2. Who is informed about the bonus color?</p>
+        <ul class="options-list">
+          <li><label><input type="radio" name="q6_answer" value="a"> Always only participant <em>A.</em></label></li>
+          <li><label><input type="radio" name="q6_answer" value="b"> Always only participant <em>B.</em></label></li>
+          <li><label><input type="radio" name="q6_answer" value="c"> Both participants.</label></li>
+          <li><label><input type="radio" name="q6_answer" value="d"> Participant <em>A</em> always, and participant <em>B</em> only if <em>A</em> chooses DISCLOSE.</label></li>
+        </ul>
+        <p class="feedback-msg correct-msg"  id="fb6-ok">✔ Correct!</p>
+        <p class="feedback-msg incorrect-msg" id="fb6-no">✘ Not quite — please review the points calculation and try again.</p>
+        <p class="lock-hint">Answer question 1 correctly to unlock this question.</p>
+      </div>
+
+      <!-- Q7 – locked until Q6 correct -->
+      <div class="question-block locked" id="qblock-7">
+        <p class="q-text">3. When does participant <em>A</em> get additional points for the bonus color?</p>
+        <ul class="options-list">
+          <li><label><input type="radio" name="q7_answer" value="a"> If <em>A</em> chooses the bonus color and <em>B</em> chooses ABSTAIN</label></li>
+          <li><label><input type="radio" name="q7_answer" value="b"> If <em>A</em> does<u>not</u>choose the bonus color and <em>B</em> chooses FOLLOW</label></li>
+          <li><label><input type="radio" name="q7_answer" value="c"> If <em>A</em> chooses the bonus color and <em>B</em> chooses FOLLOW</label></li>
+          <li><label><input type="radio" name="q7_answer" value="d"> <em>A</em> never gets any additional points</label></li>
+        </ul>
+        <p class="feedback-msg correct-msg"  id="fb7-ok">✔ Correct!</p>
+        <p class="feedback-msg incorrect-msg" id="fb7-no">✘ Not quite — please review the points calculation and try again.</p>
+        <p class="lock-hint">Answer question 1 correctly to unlock this question.</p>
+      </div>
+
+      <!-- Q7 – locked until Q6 correct -->
+      <div class="question-block locked" id="qblock-8">
+        <p class="q-text">4. How many additional points does participant <em>A</em> get if <em>B</em> chooses ABSTAIN?</p>
+        <ul class="options-list">
+          <li><label><input type="radio" name="q8_answer" value="a"> 4</label></li>
+          <li><label><input type="radio" name="q8_answer" value="b"> −4</label></li>
+          <li><label><input type="radio" name="q8_answer" value="c"> 1</label></li>
+          <li><label><input type="radio" name="q8_answer" value="d"> 0</label></li>
+        </ul>
+        <p class="feedback-msg correct-msg"  id="fb8-ok">✔ Correct!</p>
+        <p class="feedback-msg incorrect-msg" id="fb8-no">✘ Not quite — please review the points calculation and try again.</p>
+        <p class="lock-hint">Answer question 2 correctly to unlock this question.</p>
+      </div>
+
+      <!-- Q8 – locked until Q7 correct -->
+      <div class="question-block locked" id="qblock-9">
+        <p class="q-text">5. When does participant <em>B</em> get 4 additional points?</p>
+        <ul class="options-list">
+          <li><label><input type="radio" name="q9_answer" value="a"> If <em>A</em> chooses the bonus color and <em>B</em> chooses FOLLOW</label></li>
+          <li><label><input type="radio" name="q9_answer" value="b"> If <em>A</em> chooses the color they observed and <em>B</em> chooses FOLLOW</label></li>
+          <li><label><input type="radio" name="q9_answer" value="c"> If <em>A</em> chooses BROWN and <em>B</em> chooses FOLLOW</label></li>
+          <li><label><input type="radio" name="q9_answer" value="d"> If <em>A</em> chooses BLACK and <em>B</em> chooses ABSTAIN</label></li>
+        </ul>
+        <p class="feedback-msg correct-msg"  id="fb9-ok">✔ Correct!</p>
+        <p class="feedback-msg incorrect-msg" id="fb9-no">✘ Not quite — please review the points calculation and try again.</p>
+        <p class="lock-hint">Answer question 3 correctly to unlock this question.</p>
+      </div>
+
+    </div><!-- /info-card -->
+
+    <!-- Error banner -->
+    <div class="error-banner" id="errorBanner">
+      ⚠️ Please answer all questions correctly before continuing.
+    </div>
+
+    {{ formfield_errors 'q5_answer' }}
+    {{ formfield_errors 'q6_answer' }}
+    {{ formfield_errors 'q7_answer' }}
+    {{ formfield_errors 'q8_answer' }}
+    {{ formfield_errors 'q9_answer' }}
+
+    <button type="submit">Start the Experiment →</button>
+  </form>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL – Review Instructions
+════════════════════════════════════════ -->
+<div class="modal" id="modalInstr" style="display:none; justify-content:center; align-items:flex-start;">
+  <div class="modal-content">
+    <span class="close" onclick="document.getElementById('modalInstr').style.display='none'">&times;</span>
+    <h4>📋 Experiment Timeline</h4>
+
+    <div class="modal-sub">
+      <div class="step-header">
+        <span class="step-badge">1</span>
+        <h5>Context of the Experiment</h5>
+      </div>
+      <p>Both participants learn the context of the experiment:</p>
+      <ul>
+        <li>There will be an image of a colored cap.</li>
+        <li>The cap is either <span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>, with equal likelihoods.</li>
+      </ul>
+      <p>Note: Only participant <em>A</em> observes the color of the cap, participant <em>B</em> does not.</p>
+    </div>
+
+    <div class="modal-sub">
+     <div class="step-header">
+         <span class="step-badge">2</span>
+         <h5>Information on Points</h5>
+     </div>
+      <p>Both participants learn how additional points are calculated.</p>
+    </div>
+
+    <div class="modal-sub">
+      <div class="step-header">
+          <span class="step-badge">3</span>
+          <h5>Role Assignment</h5>
+      </div>
+      <p>One participant is assigned the role of <em>A</em>, the other the role of <em>B</em>.</p>
+    </div>
+
+    <div class="modal-sub">
+      <div class="step-header">
+          <span class="step-badge">4</span>
+          <h5>Participant <em>A</em>'s Choice</h5>
+      </div>
+      <p>Participant <em>A</em> chooses either <span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>.</p>
+    </div>
+
+    <div class="modal-sub">
+      <div class="step-header">
+          <span class="step-badge">5</span>
+          <h5>Participant B's Choice</h5>
+      </div>
+      <p>Participant B observes <em>A</em>'s choice and chooses one of two options:</p>
+      <ul>
+        <li><u>FOLLOW</u>: choose the same color that <em>A</em> chose.</li>
+        <li><u>ABSTAIN</u>: don't choose any color.</li>
+      </ul>
+    </div>
+
+    <div class="modal-sub">
+      <div class="step-header">
+          <span class="step-badge">6</span>
+          <h5>Earnings</h5>
+      </div>
+      <p>Points balance and final earnings are then calculated.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL – Review Points Calculation
+════════════════════════════════════════ -->
+<div class="modal" id="modalPoints" style="display:none; justify-content:center; align-items:flex-start;">
+  <div class="modal-content wide-modal">
+    <span class="close" onclick="document.getElementById('modalPoints').style.display='none'">&times;</span>
+    <h4>🔢 How Points are Calculated</h4>
+
+    <div class="modal-sub">
+      <h5>The bonus color</h5>
+        <ul>
+          <li>One of the colors (<span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>) is the bonus color. Each color is equally likely to be the bonus color.</li>
+          <li>Participant <em>A</em> may get additional points for choosing the bonus color.</li>
+          <li>Both participants learn which color is the bonus color before making their choice.</li>
+        </ul>
+      <h5>Participant <em>A</em>’s disclosure choice:</h5>
+        <ul>
+          <li>Participant <em>A</em> knows with certainty which color is the bonus color, but participant <em>B</em> does not.</li>
+          <li>Participant <em>A</em> can choose either to <u>DISCLOSE</u> or <u>DON'T DISCLOSE</u> the bonus color to participant <em>B</em>.</li>
+          <li>The disclosed information is always true.</li>
+        </ul>
+    </div>
+
+    <div class="modal-sub">
+      <h5>Participant <em>A</em>'s additional points</h5>
+      <ul>
+          <li>0 if <em>B</em> chooses <u>ABSTAIN</u>.</li>
+          <li>4 if <em>A</em> chooses the bonus color (<span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>) <strong>and</strong> <em>B</em> chooses <u>FOLLOW</u>.</li>
+          <li>0 if <em>A</em> does <em>not</em> choose the bonus color (<span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>) <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+      </ul>
+    </div>
+
+    <div class="modal-sub">
+      <h5>Participant <em>B</em>'s additional points</h5>
+      <ul>
+        <li>0 if <em>B</em> chooses <u>ABSTAIN</u>.</li>
+        <li>4 if <em>A</em> chooses the color they observed <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+        <li>-4 if <em>A</em> does <em>not</em> choose the color they observed <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  /* ── Questions in order, keyed by oTree field name ── */
+  const QUESTIONS = [
+     { name: 'q5_answer', correct: 'b', index: 5 },
+     { name: 'q6_answer', correct: 'd', index: 6 },
+     { name: 'q7_answer', correct: 'c', index: 7 },
+     { name: 'q8_answer', correct: 'd', index: 8 },
+     { name: 'q9_answer', correct: 'b', index: 9 },
+   ];
+
+  /* ── Build progress dots ── */
+  const dotsRow = document.getElementById('progressDots');
+  QUESTIONS.forEach(q => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = `dot-${q.index}`;
+    dotsRow.appendChild(d);
+  });
+
+  /* ── Live feedback + sequential unlocking ── */
+  document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+      const qName    = this.name;
+      const qIndex   = parseInt(qName.match(/\d+/)[0]);
+      const q        = QUESTIONS.find(q => q.name === qName);
+      const block    = document.getElementById(`qblock-${qIndex}`);
+      const okMsg    = document.getElementById(`fb${qIndex}-ok`);
+      const noMsg    = document.getElementById(`fb${qIndex}-no`);
+      const dot      = document.getElementById(`dot-${qIndex}`);
+      const isCorrect = (this.value === q.correct);
+
+      block.classList.remove('correct', 'incorrect');
+      block.classList.add(isCorrect ? 'correct' : 'incorrect');
+      okMsg.style.display = isCorrect  ? 'block' : 'none';
+      noMsg.style.display = !isCorrect ? 'block' : 'none';
+      dot.classList.remove('correct', 'incorrect');
+      dot.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+      if (isCorrect) {
+        // Unlock the immediately next question
+        const nextBlock = document.getElementById(`qblock-${qIndex + 1}`);
+        if (nextBlock) {
+          nextBlock.classList.remove('locked');
+          nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      } else {
+        // Re-lock and reset all subsequent questions
+        QUESTIONS.forEach(subsequent => {
+          if (subsequent.index > qIndex) {
+            const subBlock = document.getElementById(`qblock-${subsequent.index}`);
+            subBlock.classList.add('locked');
+            subBlock.classList.remove('correct', 'incorrect');
+            document.querySelectorAll(`input[name="${subsequent.name}"]`)
+                    .forEach(r => r.checked = false);
+            document.getElementById(`fb${subsequent.index}-ok`).style.display = 'none';
+            document.getElementById(`fb${subsequent.index}-no`).style.display = 'none';
+            document.getElementById(`dot-${subsequent.index}`).classList.remove('correct', 'incorrect');
+          }
+        });
+      }
+    });
+  });
+
+  /* ── Submission validation ── */
+  document.getElementById('compForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const allOk = QUESTIONS.every(q => {
+      const selected = document.querySelector(`input[name="${q.name}"]:checked`);
+      return selected && selected.value === q.correct;
+    });
+
+    const banner = document.getElementById('errorBanner');
+    if (!allOk) {
+      banner.style.display = 'block';
+      return;
+    }
+    banner.style.display = 'none';
+    this.submit();
+  });
+
+  /* ── Close modals on backdrop click ── */
+  ['modalInstr', 'modalPoints'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) {
+      if (e.target === this) this.style.display = 'none';
+    });
+  });
+</script>
+{% endblock %}

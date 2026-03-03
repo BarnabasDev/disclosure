@@ -1,0 +1,195 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block styles %}
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .center-text { text-align: center; }
+
+  .brown-word { font-weight: bold; color: #7b3f00; }
+  .black-word  { font-weight: bold; color: #212121; }
+
+  h3 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Outer info card (same as other pages) ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  /* ── Sub-cards — mirrors the modal-sub style ── */
+  .sub-card {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .sub-card:last-child { margin-bottom: 0; }
+
+  .sub-card h5 {
+    color: #00796b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.97rem;
+  }
+
+  .sub-card p, .sub-card li {
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+  }
+
+  .sub-card ul {
+    list-style-type: disc;
+    margin: 0.4rem 0 0 1.4rem;
+    padding: 0;
+  }
+
+  /* Step number badge */
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #26a69a;
+    color: white;
+    font-weight: 700;
+    font-size: 0.78rem;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-right: 0.55rem;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .step-header h5 {
+    margin: 0;
+  }
+
+  /* ── Button ── */
+  button {
+    display: block;
+    margin: 1.5rem auto;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button:hover {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 740px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <h3 class="center-text">Introduction 2/5</h3>
+
+  <div class="info-card">
+    <p style="color:#555; font-size:0.95rem; margin-bottom:1.2rem;" class="center-text">
+      <strong>The following experimental timeline is provided to both participants:</strong>
+    </p>
+
+    <!-- Step 1 -->
+    <div class="sub-card">
+      <div class="step-header">
+        <span class="step-badge">1</span>
+        <h5>Context of the Experiment</h5>
+      </div>
+      <p>Both participants learn the context of the experiment:</p>
+      <ul>
+        <li>There will be an image of a colored cap.</li>
+        <li>The cap is either <span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>, with equal likelihoods.</li>
+      </ul><br>
+      <p>Note: Only participant <em>A</em> observes the color of the cap, participant <em>B</em> does not.</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="sub-card">
+      <div class="step-header">
+        <span class="step-badge">2</span>
+        <h5>Information on Points</h5>
+      </div>
+      <p>Both participants learn how additional points are calculated.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="sub-card">
+      <div class="step-header">
+        <span class="step-badge">3</span>
+        <h5>Role Assignment</h5>
+      </div>
+      <p>One participant is assigned the role of <em>A</em>, the other the role of <em>B</em>.</p>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="sub-card">
+      <div class="step-header">
+        <span class="step-badge">4</span>
+        <h5>Participant <em>A</em>'s Choice</h5>
+      </div>
+      <p>Participant <em>A</em> chooses either <span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>.</p>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="sub-card">
+      <div class="step-header">
+        <span class="step-badge">5</span>
+        <h5>Participant <em>B</em>'s Choice</h5>
+      </div>
+      <p>Participant <em>B</em> observes <em>A</em>'s choice and chooses one of two options:</p>
+      <ul>
+        <li><u>FOLLOW</u>: choose the same color that <em>A</em> chose.</li>
+        <li><u>ABSTAIN</u>: don't choose any color.</li>
+      </ul>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="sub-card">
+      <div class="step-header">
+        <span class="step-badge">6</span>
+        <h5>Earnings</h5>
+      </div>
+      <p>Points balance and final earnings are then calculated.</p>
+    </div>
+
+  </div><!-- /info-card -->
+
+  <form method="post">
+    <button type="submit" id="continueBtn">Continue</button>
+  </form>
+
+</div>
+{% endblock %}

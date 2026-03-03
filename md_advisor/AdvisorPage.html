@@ -1,0 +1,284 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}{% endblock %}
+
+{% block styles %}
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .center-text { text-align: center; }
+
+  .brown-word { font-weight: bold; color: #7b3f00; }
+  .black-word  { font-weight: bold; color: #212121; }
+
+  h3 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* ── Outer info card ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  /* ── Sub-cards ── */
+  .sub-card {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .sub-card:last-child { margin-bottom: 0; }
+
+  .sub-card h5 {
+    color: #00796b;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    font-size: 0.97rem;
+  }
+
+  .sub-card p, .sub-card li {
+    font-size: 0.93rem;
+    line-height: 1.7;
+    color: #333;
+    margin: 0;
+  }
+
+  .sub-card ul {
+    list-style-type: disc;
+    margin: 0.5rem 0 0.3rem 1.4rem;
+    padding: 0;
+  }
+
+  .sub-card .note {
+    font-size: 0.88rem;
+    color: #555;
+    margin-top: 0.6rem;
+    font-style: italic;
+  }
+
+  /* ── Cap image block ── */
+  .cap-image-block {
+    text-align: center;
+    margin: 1rem 0 0.5rem;
+  }
+  .cap-image-block img {
+    max-width: 180px;
+  }
+
+  /* ── Choice card (form) ── */
+  .choice-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 1.5rem;
+  }
+
+  .choice-card h5 {
+    color: #004d40;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Radio options (matches comprehension page style) ── */
+  .options-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .options-list li label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-size: 0.93rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .options-list li label:hover {
+    background-color: #e8f5f4;
+    border-color: #80cbc4;
+  }
+  .options-list li input[type="radio"] {
+    accent-color: #26a69a;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ── Submit button ── */
+  button[type="submit"] {
+    display: block;
+    margin: 0 auto;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button[type="submit"]:hover:not(:disabled) {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+  button[type="submit"]:disabled {
+    background-color: #b2dfdb;
+    cursor: not-allowed;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 740px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <h3>Choose a color</h3>
+
+  <div class="info-card">
+
+    <!-- Role + cap colour -->
+    <div class="sub-card">
+      <h5>You have been assigned role <em>A</em>.</h5>
+      <p>The color of the cap is
+        {% if player.cap_color == 'brown' %}
+          <span class="brown-word">BROWN</span>:
+        {% else %}
+          <span class="black-word">BLACK</span>:
+        {% endif %}
+      </p>
+      <div class="cap-image-block">
+        {% if player.cap_color == 'brown' %}
+          <img src="{% static 'cap_brown.png' %}" alt="Brown cap">
+        {% else %}
+          <img src="{% static 'cap_black.png' %}" alt="Black cap">
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="sub-card">
+        <p>The bonus color is <span class="black-word">BLACK</span>.</p>
+    </div>
+
+    <p class="center-text">Given that the cap is
+        {% if player.cap_color == 'brown' %}<span class="brown-word">BROWN</span> and the bonus color is <span class="black-word">BLACK</span>,
+        {% else %}<span class="black-word">BLACK</span> and the bonus color is <span class="black-word">BLACK</span>,{% endif %}
+        the additional points are:
+    </p>
+
+    <!-- Your additional points -->
+    <div class="sub-card">
+      <h5>Your additional points:</h5>
+      <ul>
+        <li>0 if <em>B</em> chooses <u>ABSTAIN</u>.</li>
+        <li>
+          {% if player.has_premium_brown %}
+            {{ C.PREMIUM_BROWN }} if you choose <span class="brown-word">BROWN</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% else %}
+            0 if you choose <span class="brown-word">BROWN</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% endif %}
+        </li>
+        <li>
+          {% if player.has_premium_black %}
+            {{ C.PREMIUM_BLACK }} if you choose <span class="black-word">BLACK</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% else %}
+            0 if you choose <span class="black-word">BLACK</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Participant B's additional points -->
+    <div class="sub-card">
+      <h5>Participant <em>B</em>'s additional points:</h5>
+      <ul>
+        <li>0 if <em>B</em> chooses <u>ABSTAIN</u>.</li>
+        <li>
+          {% if player.cap_color == 'brown' %}
+            {{ C.CLIENT_CORRECT_ADDITIONAL }} if you choose <span class="brown-word">BROWN</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% else %}
+            -{{ C.CLIENT_WRONG_DEDUCTION }} if you choose <span class="brown-word">BROWN</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% endif %}
+        </li>
+        <li>
+          {% if player.cap_color == 'black' %}
+            {{ C.CLIENT_CORRECT_ADDITIONAL }} if you choose <span class="black-word">BLACK</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% else %}
+            -{{ C.CLIENT_WRONG_DEDUCTION }} if you choose <span class="black-word">BLACK</span> and <em>B</em> chooses <u>FOLLOW</u>.
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+
+    <div class="sub-card">
+        <h5>Reminders</h5>
+        <ul>
+            <li>Only you observe the color of the cap, <em>B</em> does not.</li>
+            <li><em>B</em> also knows which color is the bonus color.</li>
+        </ul>
+    </div>
+
+  </div><!-- /info-card -->
+
+  <!-- Choice form -->
+  <div class="choice-card">
+    <h5>Which color do you choose?</h5>
+    <form method="post" id="advisorForm">
+      <ul class="options-list">
+        <li>
+          <label>
+            <input type="radio" name="advisor_suggestion" value="brown">
+            <span class="brown-word">BROWN</span>
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="radio" name="advisor_suggestion" value="black">
+            <span class="black-word">BLACK</span>
+          </label>
+        </li>
+      </ul>
+      {{ formfield_errors 'advisor_suggestion' }}
+      <button type="submit" id="continueBtn" disabled>Continue</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Enable the submit button only once a color is selected
+  document.querySelectorAll('input[name="advisor_suggestion"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+      document.getElementById('continueBtn').disabled = false;
+    });
+  });
+</script>
+{% endblock %}

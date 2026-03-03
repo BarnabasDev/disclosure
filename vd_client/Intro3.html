@@ -1,0 +1,166 @@
+{% block content %}
+
+<style>
+  .center-text { text-align: center; }
+  body { font-family: "Segoe UI", Roboto, sans-serif; }
+
+  .brown-word { font-weight: bold; color: #7b3f00; }
+  .black-word { font-weight: bold; color: #212121; }
+
+  h3 { color: #004d40; font-weight: 700; margin-bottom: 1rem; }
+
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  .icon-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.3rem;
+    background-color: white;
+    border: 1px solid #26a69a;
+    color: #26a69a;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover { background-color: #26a69a; color: white; }
+
+  .sub-card {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .sub-card h5 {
+    color: #00796b;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+
+  ul { list-style-type: disc; margin-left: 1.5rem; }
+
+  u { font-weight: 600; }
+
+  button {
+    display: block;
+    margin: 1.5rem auto;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  button:hover { background-color: #2bbbad; transform: translateY(-1px); }
+
+  /* ----- Modal styling (same as comprehension page) ----- */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  .modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    margin: 5% auto;
+    width: 85%; max-width: 600px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .close {
+    position: absolute;
+    right: 12px; top: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #26a69a;
+  }
+
+  @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+
+</style>
+
+<h3 class="center-text">Introduction 3/5</h3>
+
+<div class="info-card">
+  <p class="center-text"><strong>Each participant’s additional points depend on their choice and the choice of the other participant.</strong></p>
+
+  <div class="sub-card">
+    <h5>The bonus color</h5>
+    <ul>
+      <li>One of the colors (<span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>) is the bonus color. Each color is equally likely to be the bonus color.</li>
+      <li>Participant <em>A</em> may get additional points for choosing the bonus color.</li>
+      <li>Both participants learn which color is the bonus color before making their choice.</li>
+    </ul>
+    <h5>Participant <em>A</em>’s disclosure choice:</h5>
+    <ul>
+      <li>Participant <em>A</em> knows with certainty which color is the bonus color, but participant <em>B</em> does not.</li>
+      <li>Participant <em>A</em> can choose either to <u>DISCLOSE</u> or <u>DON'T DISCLOSE</u> the bonus color to participant <em>B</em>.</li>
+      <li>The disclosed information is always true.</li>
+    </ul>
+  </div>
+
+  <div class="sub-card">
+    <h5>Participant <em>A</em>’s additional points:</h5>
+    <ul>
+      <li>0 if <em>B</em> chooses <u>ABSTAIN</u>.</li>
+      <li>4 if <em>A</em> chooses the bonus color (<span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>) <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+      <li>0 if <em>A</em> does <em>not</em>  choose the bonus color (<span class="brown-word">BROWN</span> or <span class="black-word">BLACK</span>) <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+    </ul>
+  </div>
+
+  <div class="sub-card">
+    <h5>Participant <em>B</em>’s additional points:</h5>
+    <ul>
+      <li>0 if <em>B</em> chooses <u>ABSTAIN</u>.</li>
+      <li>4 if <em>A</em> chooses the color they observed <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+      <li>-4 if <em>A</em> does <em>not</em>  choose the color they observed <b>and</b> <em>B</em> chooses <u>FOLLOW</u>.</li>
+    </ul>
+  </div>
+</div>
+
+<form method="post">
+  <button type="submit" id="continueBtn">Continue</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const modal = document.getElementById('overviewModal');
+  const openBtn = document.getElementById('openOverview');
+  const closeBtn = document.getElementById('closeOverview');
+
+  openBtn.onclick = () => modal.style.display = 'block';
+  closeBtn.onclick = () => modal.style.display = 'none';
+  window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+});
+</script>
+
+{% endblock %}

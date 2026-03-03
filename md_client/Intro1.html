@@ -1,0 +1,256 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block title %}{% endblock %}
+
+{% block styles %}
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .center-text { text-align: center; }
+
+  h3 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* ── Info card ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  /* ── Dropdown sections (details) ── */
+  details {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 0.9rem 1.3rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: all 0.25s ease;
+    cursor: pointer;
+  }
+  details:last-child { margin-bottom: 0; }
+
+  details[open] {
+    background-color: #e0f7fa;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.25);
+  }
+
+  /* Summary (clickable header) */
+  summary {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #00796b;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+
+  /* Custom arrow */
+  summary::before {
+    content: "▸";
+    color: #26a69a;
+    margin-right: 0.6rem;
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  /* Content inside details */
+  details ul, details p {
+    margin: 0.8rem 0 0 1.3rem;
+    color: #333;
+    font-size: 0.93rem;
+    line-height: 1.7;
+  }
+  details ul {
+    list-style-type: disc;
+    padding-left: 1rem;
+  }
+
+  /* ── Formula boxes ── */
+  .formula-box {
+    background-color: #f0f9f9;
+    border: 1px solid #26a69a;
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    margin: 0.8rem 0 0.5rem 1.3rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #00796b;
+    font-weight: 600;
+  }
+
+  /* ── Fraction styling ── */
+  .frac {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    letter-spacing: 0.001em;
+    text-align: center;
+  }
+  .frac > span {
+    display: block;
+    padding: 0.1em;
+  }
+  .frac span.bottom {
+    border-top: thin solid #00796b;
+  }
+  .frac .symbol {
+    display: none;
+  }
+
+  /* ── Instruction note ── */
+  .instruction-note {
+    font-size: 0.88rem;
+    color: #555;
+    font-style: italic;
+    margin-top: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ── Submit button ── */
+  button[type="submit"] {
+    display: block;
+    margin: 0 auto;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button[type="submit"]:hover:not(:disabled) {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+  button[type="submit"]:disabled {
+    background-color: #b2dfdb;
+    cursor: not-allowed;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 740px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <h3>Introduction 1/5</h3>
+
+  <div class="info-card">
+
+    <!-- Section 1: Participants and roles -->
+    <details id="section1">
+      <summary>Participants and roles</summary>
+      <ul>
+        <li>In this experiment, there are two participants, participant <em>A</em> and participant <em>B</em>.</li>
+        <li>You are matched with another real participant and assigned either the role of <em>A</em> or <em>B</em>.</li>
+        <li>Both you and the other participant get the same instructions.</li>
+      </ul>
+    </details>
+
+    <!-- Section 2: Points and earnings -->
+    <details id="section2">
+      <summary>Points and earnings</summary>
+      <ul>
+        <li>Both you and the other participant get an endowment of 10 points each.</li>
+        <li>You can get additional points, depending on the choices made in the experiment.<br>
+            Details on additional points will be provided later.</li>
+        <li>Your final earnings are the sum of your participation fee and bonus payment.</li>
+        <li>Your bonus payment is determined by your points balance:</li>
+      </ul>
+
+      <div class="formula-box">
+        Points balance = {{ C.FIXED_ADVISOR_WAGE }} points endowment + additional points
+      </div>
+
+      <div class="formula-box">
+        Bonus payment =
+        <span class="frac">
+          <span>points balance</span>
+          <span class="bottom">20</span>
+        </span>
+        × $1
+      </div>
+
+      <div class="formula-box">
+        Final earnings = participation fee + bonus payment
+      </div>
+    </details>
+
+  </div><!-- /info-card -->
+
+  <p class="center-text">You can only move on to the next page after reading all the information above.</p>
+
+  <form method="post">
+    <button type="submit" id="continueBtn" disabled>Continue</button>
+  </form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const sectionIds = ["section1", "section2"];
+  const sections = sectionIds.map(id => document.getElementById(id));
+  const continueBtn = document.getElementById('continueBtn');
+
+  let opened = [false, false];
+  let currentStep = 0;
+
+  // Disable all except the first section
+  sections.forEach((section, index) => {
+    if (index !== 0) {
+      section.style.pointerEvents = "none";
+      section.style.opacity = "0.6";
+    }
+  });
+
+  function updateContinueButton() {
+    continueBtn.disabled = !opened.every(v => v);
+  }
+
+  sections.forEach((section, index) => {
+    section.addEventListener("toggle", function () {
+
+      // Prevent opening sections out of order
+      if (section.open && !opened[index] && index !== currentStep) {
+        section.open = false;
+        return;
+      }
+
+      // Mark as opened and enable next section
+      if (section.open && !opened[index]) {
+        opened[index] = true;
+        if (index + 1 < sections.length) {
+          sections[index + 1].style.pointerEvents = "auto";
+          sections[index + 1].style.opacity = "1";
+          currentStep++;
+        }
+        updateContinueButton();
+      }
+    });
+  });
+</script>
+{% endblock %}

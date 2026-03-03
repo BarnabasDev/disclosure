@@ -1,0 +1,220 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block title %}{% endblock %}
+
+{% block styles %}
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .center-text { text-align: center; }
+
+  .brown-word { font-weight: bold; color: #7b3f00; }
+  .black-word  { font-weight: bold; color: #212121; }
+
+  h3 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* ── Info card ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  .info-card p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 0.8rem;
+  }
+
+  .info-card p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Sub-cards for outcomes ── */
+  .sub-card {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .sub-card:last-child { margin-bottom: 0; }
+
+  .sub-card h5 {
+    color: #00796b;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    font-size: 0.97rem;
+  }
+
+  .sub-card p {
+    font-size: 0.93rem;
+    line-height: 1.7;
+    color: #333;
+    margin: 0;
+  }
+
+  /* ── Highlight boxes for formulas ── */
+  .formula-box {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin: 1.2rem 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    text-align: center;
+    font-size: 1rem;
+    color: #00796b;
+    font-weight: 600;
+  }
+
+  /* ── Fraction styling ── */
+  .frac {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    letter-spacing: 0.001em;
+    text-align: center;
+  }
+  .frac > span {
+    display: block;
+    padding: 0.1em;
+  }
+  .frac span.bottom {
+    border-top: thin solid #00796b;
+  }
+  .frac .symbol {
+    display: none;
+  }
+
+  /* ── Submit button ── */
+  button[type="submit"] {
+    display: block;
+    margin: 1.5rem auto 0;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button[type="submit"]:hover {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 740px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <h3>Thank you for completing the experiment.</h3>
+
+  <div class="info-card">
+
+    <!-- Outcome summary -->
+    <div class="sub-card">
+      <h5>Summary of outcomes:</h5>
+      <p>
+        Participant <em>A</em> chose
+        {% if advisor_choice == 'brown' %}
+          <span class="brown-word">BROWN</span>.
+        {% else %}
+          <span class="black-word">BLACK</span>.
+        {% endif %}
+      </p>
+      <p>
+        The color of the cap was
+        {% if cap_color == 'brown' %}
+          <span class="brown-word">BROWN</span>.
+        {% else %}
+          <span class="black-word">BLACK</span>.
+        {% endif %}
+      </p>
+      <p>
+        You chose to
+        {% if player.client_decision == 'follow' %}
+          <u>FOLLOW</u>.
+        {% else %}
+          <u>ABSTAIN</u>.
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Earnings calculation -->
+    <p>
+      Your initial endowment was <strong>{{ C.FIXED_CLIENT_WAGE }} points</strong>.<br>
+      Your final earnings are determined by your points balance:
+    </p>
+
+    <div class="formula-box">
+      Points balance = {{ C.FIXED_CLIENT_WAGE }} points endowment + additional points
+    </div>
+
+    {% if player.client_decision == 'follow' %}
+      {% if advisor_choice == cap_color %}
+        <p>Since you chose <u>FOLLOW</u> and participant <em>A</em> chose the color they observed, you received <strong>{{ C.CLIENT_CORRECT_ADDITIONAL }} additional points</strong>.</p>
+      {% else %}
+        <p>Since you chose <u>FOLLOW</u> and participant <em>A</em> did not choose the color they observed, <strong>{{ C.CLIENT_WRONG_DEDUCTION }} points were deducted</strong> from your endowment.</p>
+      {% endif %}
+    {% else %}
+      <p>Since you chose <u>ABSTAIN</u>, you received <strong>0 additional points</strong>.</p>
+    {% endif %}
+
+    {% if belief_bonus == 2 %}
+      <p> You received <strong>2 additional points</strong> for your guess of the number of participant <em>A</em> that chose the color they observed.</p>
+    {% else %}
+      <p>You did not receive additional points for your guess of the number of participant <em>A</em> that chose the color they observed.</p>
+    {% endif %}
+
+    <p>Therefore, your final points balance and earnings are:</p>
+
+    <div class="formula-box">
+      Points balance = {{ points_balance }} points
+    </div>
+
+    <div class="formula-box">
+      Bonus payment =
+      <span class="frac">
+        <span>{{ points_balance }}</span>
+        <span class="bottom">20</span>
+      </span>
+      × $1 = ${{ final_earnings }}
+    </div>
+
+    <div class="formula-box">
+        Final earnings = $1 + ${{ final_earnings }} = ${{ final_payment }}
+    </div>
+
+
+    <p>You can expect to receive your final earnings within 2-3 weeks.</p>
+
+  </div>
+
+  <form method="post">
+    <button type="submit">Finish</button>
+  </form>
+
+</div>
+{% endblock %}

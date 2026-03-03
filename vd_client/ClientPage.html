@@ -1,0 +1,246 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block title %}{% endblock %}
+
+{% block styles %}
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .center-text { text-align: center; }
+
+  .brown-word { font-weight: bold; color: #7b3f00; }
+  .black-word  { font-weight: bold; color: #212121; }
+
+  h3 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* ── Info card ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  /* ── Sub-cards ── */
+  .sub-card {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .sub-card:last-child { margin-bottom: 0; }
+
+  .sub-card h5 {
+    color: #00796b;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    font-size: 0.97rem;
+  }
+
+  .sub-card p, .sub-card li {
+    font-size: 0.93rem;
+    line-height: 1.7;
+    color: #333;
+    margin: 0;
+  }
+
+  .sub-card ul {
+    list-style-type: disc;
+    margin: 0.5rem 0 0.3rem 1.4rem;
+    padding: 0;
+  }
+
+  /* ── Choice card ── */
+  .choice-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 1.5rem;
+  }
+
+  .choice-card h5 {
+    color: #004d40;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Radio options ── */
+  .options-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .options-list li label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-size: 0.93rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .options-list li label:hover {
+    background-color: #e8f5f4;
+    border-color: #80cbc4;
+  }
+  .options-list li input[type="radio"] {
+    accent-color: #26a69a;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ── Submit button ── */
+  button[type="submit"] {
+    display: block;
+    margin: 0 auto;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button[type="submit"]:hover:not(:disabled) {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+  button[type="submit"]:disabled {
+    background-color: #b2dfdb;
+    cursor: not-allowed;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 740px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <h3>Make your choice</h3>
+
+  <div class="info-card">
+
+    <!-- Role assignment + A's choice -->
+    <div class="sub-card">
+      <p>You have been assigned role <em>B</em>.</p>
+    </div>
+
+    {% if advisor_disclose_bonus %}
+    <div class="sub-card">
+      Participant <em>A</em> chose to disclose the bonus color. The bonus color is <span class="black-word">BLACK</span>.
+    </div>
+    <p class="center-text">Given that the bonus color is <span class="black-word">BLACK</span>, the additional points are:</p>
+    {% else %}
+    <p class="center-text">As a reminder, the additional points are:</p>
+    {% endif %}
+
+    <!-- Participant A's additional points -->
+    <div class="sub-card">
+      <h5>Participant <em>A</em>'s additional points:</h5>
+      <ul>
+        <li>0 if you choose <u>ABSTAIN</u>.</li>
+        {% if advisor_disclose_bonus %}
+          {% comment %}Bonus was disclosed - show full info{% endcomment %}
+            {% if advisor_has_premium_brown %}
+              <li>0 if <em>A</em> chose <span class="black-word">BLACK</span> and you choose <u>FOLLOW</u>.</li>
+              <li>{{ C.PREMIUM_BROWN }} if <em>A</em> chose <span class="brown-word">BROWN</span> and you choose <u>FOLLOW</u>.</li>
+            {% else %}
+            {% endif %}
+            {% if advisor_has_premium_black %}
+              <li>0 if <em>A</em> chose <span class="brown-word">BROWN</span> and you choose <u>FOLLOW</u>.</li>
+              <li>{{ C.PREMIUM_BLACK }} if <em>A</em> chose <span class="black-word">BLACK</span> and you choose <u>FOLLOW</u>.</li>
+            {% else %}
+            {% endif %}
+        {% else %}
+          {% comment %}Bonus was NOT disclosed - show generic points, as in introduction{% endcomment %}
+              <li>4 if <em>A</em> chose the bonus color <b>and</b> you choose <u>FOLLOW</u>.</li>
+              <li>0 if <em>A</em> did <em>not</em> choose the bonus color <b>and</b> you choose <u>FOLLOW</u>.</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- Your additional points -->
+    <div class="sub-card">
+    <h5>Your additional points:</h5>
+    <ul>
+      <li>0 if you choose <u>ABSTAIN</u>.</li>
+      <li>4 if <em>A</em> chooses the color they observed <b>and</b> you choose <u>FOLLOW</u>.</li>
+      <li>-4 if <em>A</em> does <em>not</em>  choose the color they observed <b>and</b> you choose <u>FOLLOW</u>.</li>
+    </ul>
+  </div>
+
+    <div class="sub-card">
+      <p>Participant <em>A</em> has seen the cap and chose
+        {% if advisor_choice == 'brown' %}
+          <span class="brown-word">BROWN</span>.
+        {% else %}
+          <span class="black-word">BLACK</span>.
+        {% endif %}
+      </p>
+    </div>
+
+  </div><!-- /info-card -->
+
+  <!-- Choice form -->
+  <div class="choice-card">
+    <h5>What do you want to do?</h5>
+    <form method="post" id="clientForm">
+      <ul class="options-list">
+        <li>
+          <label>
+            <input type="radio" name="client_decision" value="follow">
+            <u>FOLLOW</u>
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="radio" name="client_decision" value="abstain">
+            <u>ABSTAIN</u>
+          </label>
+        </li>
+      </ul>
+      {{ formfield_errors 'client_decision' }}
+      <button type="submit" id="continueBtn" disabled>Continue</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Enable the submit button only once a decision is selected
+  document.querySelectorAll('input[name="client_decision"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+      document.getElementById('continueBtn').disabled = false;
+    });
+  });
+</script>
+{% endblock %}

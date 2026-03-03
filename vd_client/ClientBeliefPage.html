@@ -1,0 +1,194 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block title %}{% endblock %}
+
+{% block styles %}
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+
+  .center-text { text-align: center; }
+
+  h3 {
+    color: #004d40;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* ── Info card ── */
+  .info-card {
+    background-color: #f0f9f9;
+    border: 2px solid #26a69a;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 10px rgba(38,166,154,0.2);
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(38,166,154,0.25);
+  }
+
+  .info-card p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ── Slider container ── */
+  .slider-container {
+    background-color: #ffffff;
+    border-left: 5px solid #26a69a;
+    border-radius: 6px;
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+
+  .slider-container h5 {
+    color: #00796b;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Slider styling ── */
+  .slider-wrapper {
+    margin: 2rem auto;
+    max-width: 600px;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .slider-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #00796b;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    height: 8px;
+    border-radius: 5px;
+    background: #b2dfdb;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #26a69a;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: #2bbbad;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #26a69a;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+  }
+
+  input[type="range"]::-moz-range-thumb:hover {
+    background: #2bbbad;
+  }
+
+  /* ── Value display ── */
+  .slider-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #26a69a;
+    margin-top: 1rem;
+  }
+
+  /* ── Submit button ── */
+  button[type="submit"] {
+    display: block;
+    margin: 1.5rem auto 0;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-family: "Segoe UI", Roboto, sans-serif;
+  }
+  button[type="submit"]:hover {
+    background-color: #2bbbad;
+    transform: translateY(-1px);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 850px; margin: 0 auto; padding: 2rem 1rem;">
+
+  <div class="info-card">
+    <p class="center-text"><strong>Your choice has now been recorded.</strong></p>
+
+    <p>This experiment has been played by 100 pairs of real participants.</p>
+
+    <p>Use the slider below to indicate how many participant <em>A</em> out of 100 you think chose the color they observed.</p>
+    <p>You will get an additional 2 points if your answer is within ± 5 of the true value.</p>
+
+    <div class="slider-container">
+      <form method="post" id="beliefForm">
+        <div class="slider-wrapper">
+          <div class="slider-row">
+            <span class="slider-label">0</span>
+            <input type="range"
+                   name="belief_advisor_truth"
+                   id="beliefSlider"
+                   min="0"
+                   max="100"
+                   value="50"
+                   step="1">
+            <span class="slider-label">100</span>
+          </div>
+          <div class="slider-value" id="sliderValue">50</div>
+        </div>
+        {{ formfield_errors 'belief_advisor_truth' }}
+        <button type="submit">Continue</button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const slider = document.getElementById('beliefSlider');
+  const valueDisplay = document.getElementById('sliderValue');
+
+  slider.addEventListener('input', function() {
+    valueDisplay.textContent = this.value;
+  });
+</script>
+{% endblock %}

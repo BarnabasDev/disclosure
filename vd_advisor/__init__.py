@@ -198,5 +198,5 @@ page_sequence = [
     AdvisorPageDisclosure,
     AdvisorPageSuggestion,
     Results,
-    redirect
+    redirect,
 ]

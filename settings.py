@@ -21,7 +21,7 @@ SESSION_CONFIGS = [
         num_demo_participants=4,
         app_sequence=['vd_advisor'],
 
-    completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT',
+    completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
        ),
     #dict(
     #    name='vd_client',

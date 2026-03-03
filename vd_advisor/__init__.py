@@ -180,6 +180,13 @@ class AdvisorPageSuggestion(Page):
 class Results(Page):
     pass
 
+class redirect(Page):
+    @staticmethod
+    def js_vars(player):
+        return dict(
+            completionlink=
+            player.subsession.session.config['completionlink']
+        )
 
 page_sequence = [
     Consent,
@@ -190,4 +197,6 @@ page_sequence = [
     Comprehension2,
     AdvisorPageDisclosure,
     AdvisorPageSuggestion,
-    Results]
+    Results,
+    redirect
+]

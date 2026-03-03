@@ -1,26 +1,26 @@
 from os import environ
 
 SESSION_CONFIGS = [
-    dict(
-        name='md_advisor',
-        display_name="md_advisor",
-        num_demo_participants=4,
-        app_sequence=['md_advisor'],
+    # dict(
+    #    name='md_advisor',
+    #    display_name="md_advisor",
+    #    num_demo_participants=4,
+    #    app_sequence=['md_advisor'],
 
-    completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
-    ),
+    #completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
+    #),
    # dict(
     #     name='md_client',
     #    display_name="md_client",
     #    num_demo_participants=4,
 #    app_sequence=['md_client'],
     #   ),
-    #dict(
-    #    name='vd_advisor',
-    #    display_name="vd_advisor",
-    #    num_demo_participants=4,
-#    app_sequence=['vd_advisor'],
-    #   ),
+    dict(
+        name='vd_advisor',
+        display_name="vd_advisor",
+        num_demo_participants=4,
+    app_sequence=['vd_advisor'],
+       ),
     #dict(
     #    name='vd_client',
     #    display_name="vd_client",

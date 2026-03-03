@@ -9,30 +9,33 @@ SESSION_CONFIGS = [
 
     completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
     ),
-    dict(
-        name='md_client',
-        display_name="md_client",
-        num_demo_participants=4,
-        app_sequence=['md_client'],
-    ),
-    dict(
-        name='vd_advisor',
-        display_name="vd_advisor",
-        num_demo_participants=4,
-        app_sequence=['vd_advisor'],
-    ),
-    dict(
-        name='vd_client',
-        display_name="vd_client",
-        num_demo_participants=4,
-        app_sequence=['vd_client'],
-    ),
+   # dict(
+    #     name='md_client',
+    #    display_name="md_client",
+    #    num_demo_participants=4,
+#    app_sequence=['md_client'],
+    #   ),
+    #dict(
+    #    name='vd_advisor',
+    #    display_name="vd_advisor",
+    #    num_demo_participants=4,
+#    app_sequence=['vd_advisor'],
+    #   ),
+    #dict(
+    #    name='vd_client',
+    #    display_name="vd_client",
+    #    num_demo_participants=4,
+#    app_sequence=['vd_client'],
+    #   ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
 # the session config can be accessed from methods in your apps as self.session.config,
 # e.g. self.session.config['participation_fee']
+ROOMS = [
+    dict( name='Study'. display_name = 'Study'),
+]
 
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""

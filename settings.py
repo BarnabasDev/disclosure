@@ -20,6 +20,8 @@ SESSION_CONFIGS = [
         display_name="vd_advisor",
         num_demo_participants=4,
     app_sequence=['vd_advisor'],
+
+    completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
        ),
     #dict(
     #    name='vd_client',

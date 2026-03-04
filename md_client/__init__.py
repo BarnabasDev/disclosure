@@ -109,27 +109,32 @@ class Player(BasePlayer):
 
 
 def creating_session(subsession):
-    file_path = Path(__file__).parent / 'test_advisor_data_md.csv'
+    file_path = Path(__file__).parent / 'md_advisor_raw.csv'
 
     with open(file_path, newline='') as f:
         reader = csv.DictReader(f)
         advisors = list(reader)
-    # shuffle so matching is random
-    random.shuffle(advisors)
 
     players = subsession.get_players()
 
-    if len(players) > len(advisors):
-        raise ValueError("Not enough advisors for clients!")
+    # Build a balanced assignment list by cycling through shuffled advisors.
+    assignment = []
+    while len(assignment) < len(players):
+        batch = advisors.copy()
+        random.shuffle(batch)
+        assignment.extend(batch)
 
-    for p, advisor in zip(players, advisors):
+    # Trim to exact number of players and shuffle the full assignment list
+    assignment = assignment[:len(players)]
+    random.shuffle(assignment)
+
+    for p, advisor in zip(players, assignment):
         p.advisor_code = advisor['advisor_code']
         p.cap_color = str(advisor['cap_color'])
         p.advisor_choice = str(advisor['advisor_choice'])
         p.advisor_has_premium_brown = int(advisor['advisor_has_premium_brown'])
         p.advisor_has_premium_black = int(advisor['advisor_has_premium_black'])
         p.true_share_advisors = float(advisor['share_chose_observed'])
-
 
 # PAGES
 class Consent(Page):

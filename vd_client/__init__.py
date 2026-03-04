@@ -108,20 +108,60 @@ class Player(BasePlayer):
 
 
 def creating_session(subsession):
-    file_path = Path(__file__).parent / 'test_advisor_data_vd.csv'
+    file_path = Path(__file__).parent / 'vd_advisor_raw.csv'
 
-    with open(file_path, newline='') as f:
+    with open(file_path, newline='', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
-        advisors = list(reader)
-    # shuffle so matching is random
-    random.shuffle(advisors)
+        all_advisors = list(reader)
+
+    # Filter: only advisors who disclosed their bonus
+    disclosed = [a for a in all_advisors if int(a['advisor_disclose_bonus']) == 1]
+
+    # Split into two pools by cap color
+    brown_pool = [a for a in disclosed if a['cap_color'] == 'brown']
+    black_pool = [a for a in disclosed if a['cap_color'] == 'black']
+
+    if not brown_pool:
+        raise ValueError("No disclosed advisors with cap_color='brown' found in CSV!")
+    if not black_pool:
+        raise ValueError("No disclosed advisors with cap_color='black' found in CSV!")
 
     players = subsession.get_players()
+    n = len(players)
 
-    if len(players) > len(advisors):
-        raise ValueError("Not enough advisors for clients!")
+    # Build a balanced assignment for each color pool separately,
+    # then interleave them 50-50 (brown, black, brown, black, ...)
+    def balanced_assignments(pool, count):
+        if count < len(pool):
+            raise ValueError(
+                f"Not enough clients ({count}) to match all {len(pool)} advisors at least once!"
+            )
 
-    for p, advisor in zip(players, advisors):
+        # Start with one guaranteed round of every advisor
+        assignment = pool.copy()
+        random.shuffle(assignment)
+
+        # Fill the remainder with balanced batches
+        while len(assignment) < count:
+            batch = pool.copy()
+            random.shuffle(batch)
+            assignment.extend(batch)
+
+        assignment = assignment[:count]
+        random.shuffle(assignment)
+        return assignment
+
+    n_brown = n // 2
+    n_black = n - n_brown  # handles odd numbers by giving black one extra
+
+    brown_assignments = balanced_assignments(brown_pool, n_brown)
+    black_assignments = balanced_assignments(black_pool, n_black)
+
+    # Interleave and shuffle so color isn't ordered in the player list
+    assignment = brown_assignments + black_assignments
+    random.shuffle(assignment)
+
+    for p, advisor in zip(players, assignment):
         p.advisor_code = advisor['advisor_code']
         p.cap_color = str(advisor['cap_color'])
         p.advisor_choice = str(advisor['advisor_choice'])
@@ -228,6 +268,14 @@ class Results(Page):
             final_payment=final_payment,
         )
 
+class redirect(Page):
+    @staticmethod
+    def js_vars(player):
+        return dict(
+            completionlink=
+            player.subsession.session.config['completionlink']
+        )
+
 page_sequence = [
     Consent,
     Intro1,
@@ -237,4 +285,6 @@ page_sequence = [
     Comprehension2,
     ClientPage,
     ClientBeliefPage,
-    Results]
+    Results,
+    redirect
+]

@@ -9,19 +9,21 @@ SESSION_CONFIGS = [
 
     #completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
     #),
-   # dict(
-    #     name='md_client',
-    #    display_name="md_client",
-    #    num_demo_participants=4,
-#    app_sequence=['md_client'],
-    #   ),
     dict(
-        name='vd_advisor',
-        display_name="vd_advisor",
-        num_demo_participants=4,
-        app_sequence=['vd_advisor'],
+       name='md_client',
+       display_name="md_client",
+       num_demo_participants=4,
+       app_sequence=['md_client'],
 
     completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
+    #   ),
+    #dict(
+    #    name='vd_advisor',
+    #    display_name="vd_advisor",
+    #    num_demo_participants=4,
+    #    app_sequence=['vd_advisor'],
+
+    #completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
        ),
     #dict(
     #    name='vd_client',

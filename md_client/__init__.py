@@ -227,6 +227,13 @@ class Results(Page):
             final_payment=final_payment,
         )
 
+class redirect(Page):
+    @staticmethod
+    def js_vars(player):
+        return dict(
+            completionlink=
+            player.subsession.session.config['completionlink']
+        )
 
 
 page_sequence = [
@@ -238,4 +245,6 @@ page_sequence = [
     Comprehension2,
     ClientPage,
     ClientBeliefPage,
-    Results]
+    Results,
+    redirect
+]

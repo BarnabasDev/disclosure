@@ -9,14 +9,14 @@ SESSION_CONFIGS = [
 
     #completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
     #),
-    dict(
-       name='md_client',
-       display_name="md_client",
-       num_demo_participants=4,
-       app_sequence=['md_client'],
+    #dict(
+    #   name='md_client',
+    #   display_name="md_client",
+    #   num_demo_participants=4,
+    #   app_sequence=['md_client'],
 
-    completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
-       ),
+    #completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
+    #   ),
     #dict(
     #    name='vd_advisor',
     #    display_name="vd_advisor",
@@ -25,14 +25,14 @@ SESSION_CONFIGS = [
 
     #completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
     #   ),
-    #dict(
-    #    name='vd_client',
-    #    display_name="vd_client",
-    #    num_demo_participants=200,
-    #    app_sequence=['vd_client'],
+    dict(
+        name='vd_client',
+        display_name="vd_client",
+        num_demo_participants=200,
+        app_sequence=['vd_client'],
 
-    # completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
-    #),
+     completionlink='https://app.prolific.com/submissions/complete?cc=C14MZCNT'
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
